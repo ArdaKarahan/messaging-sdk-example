@@ -35,12 +35,13 @@ function AppContent() {
         px="4"
         py="2"
         justify="between"
+        align="center"
         style={{
           borderBottom: "1px solid var(--gray-a2)",
         }}
       >
         <Box>
-          <Heading>Messaging SDK (ALPHA) Example</Heading>
+          <Heading>Messaging SDK Example</Heading>
         </Box>
 
         <Box>
