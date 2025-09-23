@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Card, Flex, Text, Box, Button, TextField, Badge } from '@radix-ui/themes';
 import { useMessaging } from '../hooks/useMessaging';
 import { useCurrentAccount } from '@mysten/dapp-kit';
@@ -11,6 +11,8 @@ interface ChannelProps {
 
 export function Channel({ channelId, onBack }: ChannelProps) {
   const currentAccount = useCurrentAccount();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isLoadingOlderRef = useRef(false);
   const {
     currentChannel,
     messages,
@@ -43,6 +45,16 @@ export function Channel({ channelId, onBack }: ChannelProps) {
     }
   }, [isReady, channelId, getChannelById, fetchMessages]);
 
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    // Don't scroll if we're loading older messages
+    if (!isLoadingOlderRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+    // Reset the flag after messages update
+    isLoadingOlderRef.current = false;
+  }, [messages]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -58,6 +70,7 @@ export function Channel({ channelId, onBack }: ChannelProps) {
 
   const handleLoadMore = () => {
     if (messagesCursor && !isFetchingMessages) {
+      isLoadingOlderRef.current = true;
       fetchMessages(channelId, messagesCursor);
     }
   };
@@ -165,6 +178,9 @@ export function Channel({ channelId, onBack }: ChannelProps) {
             })}
           </Flex>
         )}
+
+        {/* Scroll anchor */}
+        <div ref={messagesEndRef} />
 
         {isFetchingMessages && messages.length === 0 && (
           <Box style={{ textAlign: 'center', padding: '32px' }}>
