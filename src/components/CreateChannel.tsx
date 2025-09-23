@@ -5,7 +5,7 @@ import { isValidSuiAddress } from '@mysten/sui/utils';
 
 export function CreateChannel() {
   const { createChannel, isCreatingChannel, channelError, isReady } = useMessaging();
-  const [recipientAddress, setRecipientAddress] = useState('');
+  const [recipientAddresses, setRecipientAddresses] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -14,23 +14,35 @@ export function CreateChannel() {
     setValidationError(null);
     setSuccessMessage(null);
 
-    // Validate address
-    if (!recipientAddress.trim()) {
-      setValidationError('Please enter a recipient address');
+    // Parse and validate addresses
+    if (!recipientAddresses.trim()) {
+      setValidationError('Please enter at least one recipient address');
       return;
     }
 
-    if (!isValidSuiAddress(recipientAddress)) {
-      setValidationError('Invalid Sui address');
+    const addresses = recipientAddresses
+      .split(',')
+      .map(addr => addr.trim())
+      .filter(addr => addr.length > 0);
+
+    if (addresses.length === 0) {
+      setValidationError('Please enter at least one recipient address');
+      return;
+    }
+
+    // Validate each address
+    const invalidAddresses = addresses.filter(addr => !isValidSuiAddress(addr));
+    if (invalidAddresses.length > 0) {
+      setValidationError(`Invalid Sui address(es): ${invalidAddresses.join(', ')}`);
       return;
     }
 
     // Create channel
-    const result = await createChannel(recipientAddress);
+    const result = await createChannel(addresses);
 
     if (result?.channelId) {
       setSuccessMessage(`Channel created successfully! ID: ${result.channelId.slice(0, 10)}...`);
-      setRecipientAddress(''); // Clear input on success
+      setRecipientAddresses(''); // Clear input on success
 
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(null), 5000);
@@ -49,16 +61,16 @@ export function CreateChannel() {
 
           <Box>
             <Text size="2" color="gray">
-              Enter a Sui address to create a private messaging channel with that user.
+              Enter one or more Sui addresses separated by commas to create a private messaging channel.
             </Text>
           </Box>
 
           <TextField.Root
             size="3"
-            placeholder="Enter recipient's Sui address (0x...)"
-            value={recipientAddress}
+            placeholder="Enter Sui addresses (0x..., 0x..., ...)"
+            value={recipientAddresses}
             onChange={(e) => {
-              setRecipientAddress(e.target.value);
+              setRecipientAddresses(e.target.value);
               setValidationError(null);
             }}
             disabled={!isReady || isCreatingChannel}

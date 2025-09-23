@@ -2,12 +2,13 @@ import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
 import { Box, Container, Flex, Heading } from "@radix-ui/themes";
 import { SessionKeyProvider } from "./providers/SessionKeyProvider";
 import { MessagingClientProvider } from "./providers/MessagingClientProvider";
-import { ExampleMessaging } from "./ExampleMessaging";
+
 import { CreateChannel } from "./components/CreateChannel";
 import { ChannelList } from "./components/ChannelList";
 import { Channel } from "./components/Channel";
 import { useState, useEffect } from "react";
 import { isValidSuiObjectId } from "@mysten/sui/utils";
+import { MessagingStatus } from "./components/MessagingStatus";
 
 function AppContent() {
   const currentAccount = useCurrentAccount();
@@ -51,7 +52,6 @@ function AppContent() {
           mt="5"
           pt="2"
           px="4"
-          style={{ background: "var(--gray-a2)", minHeight: 500 }}
         >
           {currentAccount ? (
             channelId ? (
@@ -64,7 +64,7 @@ function AppContent() {
               />
             ) : (
               <Flex direction="column" gap="4">
-                <ExampleMessaging />
+                <MessagingStatus />
                 <CreateChannel />
                 <ChannelList />
               </Flex>

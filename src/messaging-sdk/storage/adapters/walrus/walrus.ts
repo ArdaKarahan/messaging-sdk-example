@@ -1,3 +1,4 @@
+// @ts-ignore
 import type { ClientWithExtensions } from '@mysten/sui/dist/cjs/experimental';
 import type { StorageAdapter, StorageConfig, StorageOptions } from '../storage.js';
 import type { WalrusClient } from '@mysten/walrus';

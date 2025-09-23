@@ -3,7 +3,7 @@ import { useSessionKey } from '../providers/SessionKeyProvider';
 import { useSignAndExecuteTransaction, useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 import { useState, useCallback, useEffect } from 'react';
 import { Transaction } from '@mysten/sui/transactions';
-import { DecryptedChannelObject, DecryptMessageResult, EncryptedSymmetricKey } from '../messaging-sdk/types';
+import { DecryptedChannelObject, DecryptMessageResult, ChannelMessagesDecryptedRequest } from '../messaging-sdk/types';
 
 export const useMessaging = () => {
   const messagingClient = useMessagingClient();
@@ -27,7 +27,7 @@ export const useMessaging = () => {
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
 
   // Create channel function
-  const createChannel = useCallback(async (recipientAddress: string) => {
+  const createChannel = useCallback(async (recipientAddresses: string[]) => {
     if (!messagingClient || !currentAccount) {
       setChannelError('Messaging client or account not available');
       return null;
@@ -40,7 +40,7 @@ export const useMessaging = () => {
       // Create channel flow
       const flow = messagingClient.createChannelFlow({
         creatorAddress: currentAccount.address,
-        initialMemberAddresses: [recipientAddress],
+        initialMemberAddresses: recipientAddresses,
       });
 
       // Step 1: Build and execute channel creation
@@ -59,7 +59,7 @@ export const useMessaging = () => {
         (change) => change.type === 'created' && change.objectType?.endsWith('::channel::Channel')
       );
 
-      const channelId = createdChannel?.objectId;
+      const channelId = (createdChannel as any)?.objectId;
 
       // Step 2: Get generated caps
       const { creatorMemberCap } = await flow.getGeneratedCaps({ digest });
@@ -222,7 +222,7 @@ export const useMessaging = () => {
       $kind: 'Encrypted' as const,
       encryptedBytes: new Uint8Array(encryptedKeyBytes),
       version: keyVersion,
-    } as EncryptedSymmetricKey;
+    } as ChannelMessagesDecryptedRequest['encryptedKey'];
   }, [currentChannel, getChannelById]);
 
   // Send message function

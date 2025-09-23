@@ -1,6 +1,7 @@
 import { Card, Flex, Text, Box, Separator, Badge, Button } from '@radix-ui/themes';
 import { useMessaging } from '../hooks/useMessaging';
 import { useEffect } from 'react';
+import { formatTimestamp, formatAddress } from '../utils/formatters';
 
 export function ChannelList() {
   const { channels, isFetchingChannels, fetchChannels, isReady } = useMessaging();
@@ -8,16 +9,6 @@ export function ChannelList() {
   useEffect(() => {
     console.log('Channels updated:', channels);
   }, [channels]);
-
-  const formatTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   return (
     <Card>
@@ -54,7 +45,11 @@ export function ChannelList() {
           </Box>
         ) : (
           <Flex direction="column" gap="2">
-            {channels.map((channel) => (
+            {channels.sort((a, b) => {
+              const aTime = a.last_message ? Number(a.last_message.createdAtMs) : Number(a.created_at_ms);
+              const bTime = b.last_message ? Number(b.last_message.createdAtMs) : Number(b.created_at_ms);
+              return bTime - aTime;
+            }).map((channel) => (
               <Box
                 key={channel.id.id}
                 p="3"
@@ -105,7 +100,7 @@ export function ChannelList() {
                         Members
                       </Text>
                       <Text size="2" weight="medium" style={{ display: 'block' }}>
-                        {/* {channel.member_count} */}
+                        {channel.auth.member_permissions.contents.length}
                       </Text>
                     </Box>
 
@@ -114,7 +109,7 @@ export function ChannelList() {
                         Created
                       </Text>
                       <Text size="2" weight="medium" style={{ display: 'block' }}>
-                        {channel.created_at_ms}
+                        {formatTimestamp(channel.created_at_ms)}
                       </Text>
                     </Box>
                   </Flex>
@@ -131,9 +126,14 @@ export function ChannelList() {
                             ? `${channel.last_message.text.slice(0, 50)}...`
                             : channel.last_message.text}
                         </Text>
-                        <Text size="1" color="gray">
-                          {channel.updated_at_ms}
-                        </Text>
+                        <Flex gap="2" align="center">
+                          <Text size="1" color="gray">
+                            from: {formatAddress(channel.last_message.sender)}
+                          </Text>
+                          <Text size="1" color="gray">
+                            • {formatTimestamp(channel.last_message?.createdAtMs)}
+                          </Text>
+                        </Flex>
                       </Box>
                     </>
                   )}

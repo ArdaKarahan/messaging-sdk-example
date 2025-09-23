@@ -1,8 +1,8 @@
-import { useMessaging } from './hooks/useMessaging';
+import { useMessaging } from '../hooks/useMessaging';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { Box, Card, Text, Badge, Flex, Separator } from '@radix-ui/themes';
 
-export function ExampleMessaging() {
+export function MessagingStatus() {
   const currentAccount = useCurrentAccount();
   const { client, sessionKey, isInitializing, error, isReady } = useMessaging();
 
@@ -56,16 +56,6 @@ export function ExampleMessaging() {
           </>
         )}
 
-        {sessionKey && (
-          <>
-            <Separator size="4" />
-            <Box>
-              <Text size="2" color="gray">
-                Session expires in: {new Date(sessionKey.expirationTime).toLocaleTimeString()}
-              </Text>
-            </Box>
-          </>
-        )}
 
         {isReady && (
           <>

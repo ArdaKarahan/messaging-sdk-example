@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Card, Flex, Text, Box, Separator, Button, TextField, Badge } from '@radix-ui/themes';
+import { Card, Flex, Text, Box, Button, TextField, Badge } from '@radix-ui/themes';
 import { useMessaging } from '../hooks/useMessaging';
 import { useCurrentAccount } from '@mysten/dapp-kit';
+import { formatTimestamp, formatAddress } from '../utils/formatters';
 
 interface ChannelProps {
   channelId: string;
@@ -59,20 +60,6 @@ export function Channel({ channelId, onBack }: ChannelProps) {
     if (messagesCursor && !isFetchingMessages) {
       fetchMessages(channelId, messagesCursor);
     }
-  };
-
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
-  const formatTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   if (!isReady) {
