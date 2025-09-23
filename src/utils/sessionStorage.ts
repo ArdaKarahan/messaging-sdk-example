@@ -23,22 +23,66 @@ export function saveSessionKey(
     const storageKey = getSessionKeyStorageKey(address, packageId);
     const exported = sessionKey.export();
 
-    // Debug: log the exported object to understand its structure
-    console.log('Exported session key structure:', exported);
+    // Deep inspection of the exported object
+    console.log('Inspecting exported session key:');
+    for (const [key, value] of Object.entries(exported)) {
+      const valueType = typeof value;
+      const isObject = valueType === 'object' && value !== null;
+      const className = isObject ? Object.prototype.toString.call(value) : '';
+
+      console.log(`  ${key}: type=${valueType}, class=${className}`);
+
+      if (isObject && !Array.isArray(value)) {
+        // Check if it's a plain object
+        const isPlainObject = value.constructor === Object;
+        console.log(`    isPlainObject=${isPlainObject}`);
+
+        if (!isPlainObject) {
+          // This might be the problematic field
+          console.log(`    WARNING: Non-plain object detected`);
+          console.log(`    Constructor:`, value.constructor?.name);
+        }
+      }
+
+      // Try to serialize this specific field
+      try {
+        JSON.stringify(value);
+        console.log(`    ✓ Serializable`);
+      } catch (e) {
+        console.log(`    ✗ NOT serializable:`, e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Manual serialization - only copy serializable fields
+    const serializable: any = {};
+    for (const [key, value] of Object.entries(exported)) {
+      try {
+        // Test if this specific value is serializable
+        JSON.stringify(value);
+        serializable[key] = value;
+      } catch {
+        console.warn(`Skipping non-serializable field: ${key}`);
+        // Skip non-serializable fields
+        if (key === 'sessionKey' && typeof value === 'object' && value !== null) {
+          // The sessionKey might be an object that needs special handling
+          // Try to extract a string representation
+          if ('toString' in value) {
+            serializable[key] = (value as any).toString();
+          }
+        }
+      }
+    }
 
     const storedData: StoredSessionKey = {
       version: SESSION_KEY_VERSION,
-      data: exported,
+      data: serializable as ExportedSessionKey,
       storedAt: Date.now()
     };
 
-    // Try to stringify to check for serialization issues
-    const jsonString = JSON.stringify(storedData);
-    localStorage.setItem(storageKey, jsonString);
-    console.log('Session key saved successfully');
+    localStorage.setItem(storageKey, JSON.stringify(storedData));
+    console.log('Session key saved to cache');
   } catch (error) {
     console.error('Failed to save session key to storage:', error);
-    console.error('Session key export result:', sessionKey.export());
   }
 }
 
