@@ -40,7 +40,7 @@ function AppContent() {
         }}
       >
         <Box>
-          <Heading>Messaging SDK Example</Heading>
+          <Heading>Messaging SDK (ALPHA) Example</Heading>
         </Box>
 
         <Box>
