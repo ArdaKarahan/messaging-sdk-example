@@ -1,14 +1,24 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useCurrentAccount, useSignPersonalMessage, useSuiClient } from '@mysten/dapp-kit';
 import { SessionKey } from '@mysten/seal';
+import {
+  loadSessionKey,
+  saveSessionKey,
+  clearSessionKey,
+  clearAllExpiredSessions
+} from '../utils/sessionStorage';
 
 interface SessionKeyContextProps {
   sessionKey: SessionKey | null;
   isInitializing: boolean;
   error: Error | null;
+  clearSession: () => void;
 }
 
 const SessionKeyContext = createContext<SessionKeyContextProps | undefined>(undefined);
+
+const PACKAGE_ID = '0x857e46acfe15fca0c68be86897b1af542bc686d397c171da48911e797d6c8417';
+const TTL_MINUTES = 30;
 
 export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
   const suiClient = useSuiClient();
@@ -18,6 +28,18 @@ export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
   const [sessionKey, setSessionKey] = useState<SessionKey | null>(null);
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  const clearSession = () => {
+    if (currentAccount?.address) {
+      clearSessionKey(currentAccount.address, PACKAGE_ID);
+      setSessionKey(null);
+    }
+  };
+
+  useEffect(() => {
+    // Clean up expired sessions on mount
+    clearAllExpiredSessions();
+  }, []);
 
   useEffect(() => {
     const initializeSessionKey = async () => {
@@ -30,11 +52,36 @@ export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
 
       try {
-        // Create a new session key
+        // First, try to load a cached session key
+        const cachedSessionData = loadSessionKey(currentAccount.address, PACKAGE_ID);
+
+        if (cachedSessionData) {
+          console.log('Loading cached session key');
+          try {
+            // Import the cached session key
+            const restoredSessionKey = SessionKey.import(cachedSessionData, suiClient);
+
+            // Double-check it's not expired
+            if (!restoredSessionKey.isExpired()) {
+              setSessionKey(restoredSessionKey);
+              console.log('Successfully loaded cached session key');
+              return;
+            } else {
+              console.log('Cached session key is expired, creating new one');
+              clearSessionKey(currentAccount.address, PACKAGE_ID);
+            }
+          } catch (error) {
+            console.error('Failed to import cached session key:', error);
+            clearSessionKey(currentAccount.address, PACKAGE_ID);
+          }
+        }
+
+        // No valid cached session, create a new one
+        console.log('Creating new session key');
         const newSessionKey = await SessionKey.create({
           address: currentAccount.address,
-          packageId: '0x857e46acfe15fca0c68be86897b1af542bc686d397c171da48911e797d6c8417',
-          ttlMin: 30, // 30 minutes TTL
+          packageId: PACKAGE_ID,
+          ttlMin: TTL_MINUTES,
           suiClient,
         });
 
@@ -45,6 +92,10 @@ export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
 
         // Set the signature on the session key
         await newSessionKey.setPersonalMessageSignature(message.signature);
+
+        // Save the session key to storage
+        saveSessionKey(currentAccount.address, PACKAGE_ID, newSessionKey);
+        console.log('New session key created and saved');
 
         setSessionKey(newSessionKey);
       } catch (err) {
@@ -59,8 +110,16 @@ export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
     initializeSessionKey();
   }, [currentAccount?.address, suiClient, signPersonalMessage]);
 
+  // Clean up on disconnect
+  useEffect(() => {
+    if (!currentAccount?.address && sessionKey) {
+      console.log('Wallet disconnected, clearing session');
+      setSessionKey(null);
+    }
+  }, [currentAccount?.address, sessionKey]);
+
   return (
-    <SessionKeyContext.Provider value={{ sessionKey, isInitializing, error }}>
+    <SessionKeyContext.Provider value={{ sessionKey, isInitializing, error, clearSession }}>
       {children}
     </SessionKeyContext.Provider>
   );
