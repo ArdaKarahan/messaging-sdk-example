@@ -20,12 +20,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 7
+          version: 9
 
       - name: Install dependencies
         run: pnpm install
@@ -40,7 +40,7 @@ jobs:
           SUI_KEYSTORE: ${{ secrets.SUI_KEYSTORE }}
           DIST: dist
           SUI_NETWORK: mainnet
-          EPOCHS: 10
+          EPOCHS: 53
           # WS_RESOURCES: ws-resources.json
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
