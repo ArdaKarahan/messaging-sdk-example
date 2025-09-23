@@ -25,7 +25,7 @@ The starting point for this app is the Mysten Lab's counter example app. Navigat
 3. Once built, navigate to the root directory of the app (it should be called whatever your input was in the previous step)
 
 ### Step 1: Import the SDKs
-TODO: fill this in later
+The SDK's npm package is still in the process of being publish so the SDK needs to be manually embedded in the app. Visit the [SDK repository](https://github.com/MystenLabs/sui-stack-messaging-sdk/tree/main?tab=readme-ov-file#installation) for instructions on how to install the SDK. 
 
 ### Step 2: Set up the app's contexts
 
