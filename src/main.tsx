@@ -16,7 +16,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <Theme appearance="dark">
       <QueryClientProvider client={queryClient}>
         <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
-          <WalletProvider autoConnect>
+          <WalletProvider
+            autoConnect
+            slushWallet={{
+              name: "Messaging SDK Example App"
+            }}
+          >
             <App />
           </WalletProvider>
         </SuiClientProvider>
