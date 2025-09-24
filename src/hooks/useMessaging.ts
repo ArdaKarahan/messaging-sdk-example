@@ -29,7 +29,7 @@ export const useMessaging = () => {
   // Create channel function
   const createChannel = useCallback(async (recipientAddresses: string[]) => {
     if (!messagingClient || !currentAccount) {
-      setChannelError('Messaging client or account not available');
+      setChannelError('[createChannel] Messaging client or account not available');
       return null;
     }
 
@@ -88,7 +88,7 @@ export const useMessaging = () => {
 
       return { channelId };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to create channel';
+      const errorMsg = err instanceof Error ? `[createChannel] ${err.message}` : '[createChannel] Failed to create channel';
       setChannelError(errorMsg);
       console.error('Error creating channel:', err);
       return null;
@@ -109,12 +109,12 @@ export const useMessaging = () => {
     try {
       const response = await messagingClient.getChannelObjectsByAddress({
         address: currentAccount.address,
-        limit: 50,
+        limit: 10,
       });
 
       setChannels(response.channelObjects);
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch channels';
+      const errorMsg = err instanceof Error ? `[fetchChannels] ${err.message}` : '[fetchChannels] Failed to fetch channels';
       setChannelError(errorMsg);
       console.error('Error fetching channels:', err);
     } finally {
@@ -142,7 +142,7 @@ export const useMessaging = () => {
       }
       return null;
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch channel';
+      const errorMsg = err instanceof Error ? `[getChannelById] ${err.message}` : '[getChannelById] Failed to fetch channel';
       setChannelError(errorMsg);
       console.error('Error fetching channel:', err);
       return null;
@@ -178,7 +178,7 @@ export const useMessaging = () => {
       setMessagesCursor(response.cursor);
       setHasMoreMessages(response.hasNextPage);
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch messages';
+      const errorMsg = err instanceof Error ? `[fetchMessages] ${err.message}` : '[fetchMessages] Failed to fetch messages';
       setChannelError(errorMsg);
       console.error('Error fetching messages:', err);
     } finally {
@@ -228,7 +228,7 @@ export const useMessaging = () => {
   // Send message function
   const sendMessage = useCallback(async (channelId: string, message: string) => {
     if (!messagingClient || !currentAccount) {
-      setChannelError('Messaging client or account not available');
+      setChannelError('[sendMessage] Messaging client or account not available');
       return null;
     }
 
@@ -272,7 +272,7 @@ export const useMessaging = () => {
 
       return { digest };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to send message';
+      const errorMsg = err instanceof Error ? `[sendMessage] ${err.message}` : '[sendMessage] Failed to send message';
       setChannelError(errorMsg);
       console.error('Error sending message:', err);
       return null;
