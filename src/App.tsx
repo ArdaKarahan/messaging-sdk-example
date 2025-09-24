@@ -1,5 +1,5 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import { Box, Container, Flex, Heading } from "@radix-ui/themes";
+import { Box, Container, Flex, Heading, Button } from "@radix-ui/themes";
 import { SessionKeyProvider } from "./providers/SessionKeyProvider";
 import { MessagingClientProvider } from "./providers/MessagingClientProvider";
 
@@ -45,7 +45,19 @@ function AppContent() {
         </Box>
 
         <Box>
-          <ConnectButton />
+          <Flex gap="2" align="center">
+            {currentAccount && (
+              <Button
+                variant="soft"
+                onClick={() => {
+                  window.open(`https://faucet.sui.io/?address=${currentAccount.address}`, '_blank');
+                }}
+              >
+                Get Testnet SUI
+              </Button>
+            )}
+            <ConnectButton />
+          </Flex>
         </Box>
       </Flex>
       <Container>
