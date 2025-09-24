@@ -1,5 +1,6 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import { Box, Container, Flex, Heading, Button } from "@radix-ui/themes";
+import { Box, Container, Flex, Heading, Button, IconButton } from "@radix-ui/themes";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { SessionKeyProvider } from "./providers/SessionKeyProvider";
 import { MessagingClientProvider } from "./providers/MessagingClientProvider";
 
@@ -40,9 +41,18 @@ function AppContent() {
           borderBottom: "1px solid var(--gray-a2)",
         }}
       >
-        <Box>
+        <Flex align="center" gap="2">
           <Heading>Messaging SDK Example</Heading>
-        </Box>
+          <IconButton
+            size="2"
+            variant="ghost"
+            onClick={() => {
+              window.open('https://github.com/MystenLabs/messaging-sdk-example', '_blank');
+            }}
+          >
+            <GitHubLogoIcon width="24" height="24" />
+          </IconButton>
+        </Flex>
 
         <Box>
           <Flex gap="2" align="center">
