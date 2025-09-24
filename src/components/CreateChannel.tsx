@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Card, Flex, Text, TextField, Button, Separator, Box } from '@radix-ui/themes';
 import { useMessaging } from '../hooks/useMessaging';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 import { isValidSuiAddress } from '@mysten/sui/utils';
 import { trackEvent, trackError, AnalyticsEvents } from '../utils/analytics';
 
 export function CreateChannel() {
   const { createChannel, isCreatingChannel, channelError, isReady } = useMessaging();
+  const currentAccount = useCurrentAccount();
   const [recipientAddresses, setRecipientAddresses] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -28,6 +30,19 @@ export function CreateChannel() {
 
     if (addresses.length === 0) {
       setValidationError('Please enter at least one recipient address');
+      return;
+    }
+
+    // Check for duplicate addresses in the input
+    const uniqueAddresses = [...new Set(addresses)];
+    if (uniqueAddresses.length !== addresses.length) {
+      setValidationError('Duplicate addresses detected. Please enter each address only once.');
+      return;
+    }
+
+    // Check if user is trying to add their own address
+    if (currentAccount && addresses.some(addr => addr.toLowerCase() === currentAccount.address.toLowerCase())) {
+      setValidationError('You cannot add your own connected wallet address. You will be automatically included in the channel.');
       return;
     }
 
