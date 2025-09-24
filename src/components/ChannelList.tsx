@@ -2,6 +2,7 @@ import { Card, Flex, Text, Box, Separator, Badge, Button } from '@radix-ui/theme
 import { useMessaging } from '../hooks/useMessaging';
 import { useEffect } from 'react';
 import { formatTimestamp, formatAddress } from '../utils/formatters';
+import { trackEvent, AnalyticsEvents } from '../utils/analytics';
 
 export function ChannelList() {
   const { channels, isFetchingChannels, fetchChannels, isReady } = useMessaging();
@@ -20,7 +21,10 @@ export function ChannelList() {
           <Button
             size="2"
             variant="soft"
-            onClick={fetchChannels}
+            onClick={() => {
+              trackEvent(AnalyticsEvents.CHANNEL_LIST_REFRESHED);
+              fetchChannels();
+            }}
             disabled={isFetchingChannels || !isReady}
           >
             {isFetchingChannels ? 'Refreshing...' : 'Refresh'}

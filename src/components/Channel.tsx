@@ -3,6 +3,7 @@ import { Card, Flex, Text, Box, Button, TextField, Badge } from '@radix-ui/theme
 import { useMessaging } from '../hooks/useMessaging';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { formatTimestamp, formatAddress } from '../utils/formatters';
+import { trackEvent, trackError, AnalyticsEvents } from '../utils/analytics';
 
 interface ChannelProps {
   channelId: string;
@@ -32,6 +33,11 @@ export function Channel({ channelId, onBack }: ChannelProps) {
   // Fetch channel and messages on mount
   useEffect(() => {
     if (isReady && channelId) {
+      // Track channel open event
+      trackEvent(AnalyticsEvents.CHANNEL_OPENED, {
+        channel_id: channelId,
+      });
+
       getChannelById(channelId).then(() => {
         fetchMessages(channelId);
       });
@@ -65,6 +71,16 @@ export function Channel({ channelId, onBack }: ChannelProps) {
     const result = await sendMessage(channelId, messageText);
     if (result) {
       setMessageText(''); // Clear input on success
+      // Track successful message send
+      trackEvent(AnalyticsEvents.MESSAGE_SENT, {
+        channel_id: channelId,
+        message_length: messageText.length,
+      });
+    } else if (channelError) {
+      // Track message sending error
+      trackError('message_send', channelError, {
+        channel_id: channelId,
+      });
     }
   };
 
@@ -72,6 +88,10 @@ export function Channel({ channelId, onBack }: ChannelProps) {
     if (messagesCursor && !isFetchingMessages) {
       isLoadingOlderRef.current = true;
       fetchMessages(channelId, messagesCursor);
+      // Track loading more messages
+      trackEvent(AnalyticsEvents.MESSAGES_LOADED_MORE, {
+        channel_id: channelId,
+      });
     }
   };
 

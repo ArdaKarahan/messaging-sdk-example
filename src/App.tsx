@@ -10,13 +10,27 @@ import { Channel } from "./components/Channel";
 import { useState, useEffect } from "react";
 import { isValidSuiObjectId } from "@mysten/sui/utils";
 import { MessagingStatus } from "./components/MessagingStatus";
+import { trackEvent, AnalyticsEvents } from "./utils/analytics";
 
 function AppContent() {
   const currentAccount = useCurrentAccount();
+  const [prevAccount, setPrevAccount] = useState(currentAccount);
   const [channelId, setChannelId] = useState<string | null>(() => {
     const hash = window.location.hash.slice(1);
     return isValidSuiObjectId(hash) ? hash : null;
   });
+
+  // Track wallet connection changes
+  useEffect(() => {
+    if (currentAccount && !prevAccount) {
+      trackEvent(AnalyticsEvents.WALLET_CONNECTED, {
+        address: currentAccount.address,
+      });
+    } else if (!currentAccount && prevAccount) {
+      trackEvent(AnalyticsEvents.WALLET_DISCONNECTED);
+    }
+    setPrevAccount(currentAccount);
+  }, [currentAccount, prevAccount]);
 
   // Listen for hash changes
   useEffect(() => {
@@ -47,6 +61,7 @@ function AppContent() {
             size="2"
             variant="ghost"
             onClick={() => {
+              trackEvent(AnalyticsEvents.GITHUB_CLICKED);
               window.open('https://github.com/MystenLabs/messaging-sdk-example', '_blank');
             }}
           >
@@ -60,6 +75,9 @@ function AppContent() {
               <Button
                 variant="soft"
                 onClick={() => {
+                  trackEvent(AnalyticsEvents.FAUCET_CLICKED, {
+                    address: currentAccount.address,
+                  });
                   window.open(`https://faucet.sui.io/?address=${currentAccount.address}`, '_blank');
                 }}
               >

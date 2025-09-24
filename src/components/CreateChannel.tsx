@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, Flex, Text, TextField, Button, Separator, Box } from '@radix-ui/themes';
 import { useMessaging } from '../hooks/useMessaging';
 import { isValidSuiAddress } from '@mysten/sui/utils';
+import { trackEvent, trackError, AnalyticsEvents } from '../utils/analytics';
 
 export function CreateChannel() {
   const { createChannel, isCreatingChannel, channelError, isReady } = useMessaging();
@@ -44,8 +45,17 @@ export function CreateChannel() {
       setSuccessMessage(`Channel created successfully! ID: ${result.channelId.slice(0, 10)}...`);
       setRecipientAddresses(''); // Clear input on success
 
+      // Track successful channel creation
+      trackEvent(AnalyticsEvents.CHANNEL_CREATED, {
+        member_count: addresses.length + 1,
+        channel_id: result.channelId,
+      });
+
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(null), 5000);
+    } else if (channelError) {
+      // Track channel creation error
+      trackError('channel_creation', channelError);
     }
   };
 
