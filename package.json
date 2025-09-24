@@ -12,6 +12,7 @@
   "dependencies": {
     "@mysten/bcs": "^1.8.0",
     "@mysten/dapp-kit": "0.18.0",
+    "@mysten/messaging": "file:/Users/danielleavitt/Documents/messaging-sdk-example/mysten-messaging-0.0.1.tgz",
     "@mysten/seal": "^0.6.0",
     "@mysten/sui": "1.38.0",
     "@mysten/sui-grpc": "^0.1.0",

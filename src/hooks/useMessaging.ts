@@ -3,7 +3,7 @@ import { useSessionKey } from '../providers/SessionKeyProvider';
 import { useSignAndExecuteTransaction, useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 import { useState, useCallback, useEffect } from 'react';
 import { Transaction } from '@mysten/sui/transactions';
-import { DecryptedChannelObject, DecryptMessageResult, ChannelMessagesDecryptedRequest } from '../messaging-sdk/types';
+import { DecryptedChannelObject, DecryptMessageResult, ChannelMessagesDecryptedRequest } from '@mysten/messaging';
 
 export const useMessaging = () => {
   const messagingClient = useMessagingClient();

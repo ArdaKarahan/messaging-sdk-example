@@ -1,8 +1,9 @@
 import { createContext, ReactNode, useMemo, useContext } from 'react';
 import { useSuiClient } from '@mysten/dapp-kit';
 import { SealClient } from '@mysten/seal';
-import { MessagingClient, WalrusStorageAdapter } from '../messaging-sdk';
+import { SuiStackMessagingClient, WalrusStorageAdapter } from '@mysten/messaging';
 import { useSessionKey } from './SessionKeyProvider';
+import { SuiClient } from '@mysten/sui/client';
 
 // Hard-coded Seal server configurations for testnet
 const SEAL_SERVERS = [
@@ -10,12 +11,9 @@ const SEAL_SERVERS = [
   '0xf5d14a81a982144ae441cd7d64b09027f116a468bd36e7eca494f750591623c8',
 ];
 
-// Hard-coded package configuration
-const PACKAGE_ID = '0x857e46acfe15fca0c68be86897b1af542bc686d397c171da48911e797d6c8417';
+const MessagingClientContext = createContext<SuiStackMessagingClient | null>(null);
 
-const MessagingClientContext = createContext<MessagingClient | null>(null);
-
-export const useMessagingClient = (): MessagingClient | null => {
+export const useMessagingClient = (): SuiStackMessagingClient | null => {
   const ctx = useContext(MessagingClientContext);
   if (ctx === undefined) {
     throw new Error('useMessagingClient must be used within a MessagingClientProvider');
@@ -36,7 +34,16 @@ export const MessagingClientProvider = ({
 
     try {
       // Create the extended client with SealClient and MessagingClient
-      const extendedClient = suiClient
+      const extendedClient = new SuiClient({
+        url: "https://fullnode.testnet.sui.io:443",
+        mvr: {
+          overrides: {
+            packages: {
+              '@local-pkg/sui-stack-messaging': "0x984960ebddd75c15c6d38355ac462621db0ffc7d6647214c802cd3b685e1af3d", // Or provide your own package ID
+            },
+          },
+        },
+      })
         .$extend(
           SealClient.asClientExtension({
             serverConfigs: SEAL_SERVERS.map((id) => ({
@@ -46,17 +53,7 @@ export const MessagingClientProvider = ({
           })
         )
         .$extend(
-          MessagingClient.experimental_asClientExtension({
-            packageConfig: {
-              packageId: PACKAGE_ID,
-              memberCapType: `${PACKAGE_ID}::member_cap::MemberCap`,
-              sealApproveContract: {
-                packageId: PACKAGE_ID,
-                module: 'seal_policies',
-                functionName: 'seal_approve',
-              },
-              sealSessionKeyTTLmins: 30,
-            },
+          SuiStackMessagingClient.experimental_asClientExtension({
             storage: (client) =>
               new WalrusStorageAdapter(client, {
                 publisher: 'https://publisher.walrus-testnet.walrus.space',

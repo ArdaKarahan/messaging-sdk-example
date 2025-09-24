@@ -18,7 +18,7 @@ interface SessionKeyContextProps {
 
 const SessionKeyContext = createContext<SessionKeyContextProps | undefined>(undefined);
 
-const PACKAGE_ID = '0x857e46acfe15fca0c68be86897b1af542bc686d397c171da48911e797d6c8417';
+const PACKAGE_ID = '0x984960ebddd75c15c6d38355ac462621db0ffc7d6647214c802cd3b685e1af3d';
 const TTL_MINUTES = 30;
 
 export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
