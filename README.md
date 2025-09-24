@@ -68,4 +68,4 @@ The UI for displaying a `Channel` and send messages is in the [`Channel` compone
 
 
 ## Help, I'm stuck!
-[Join the discord](https://discord.gg/K79FVNcw55) to ask questions about the example app and the SDK! 
+[Join the discord](https://discord.gg/sS893zcPMN) to ask questions about the example app and the SDK! 
