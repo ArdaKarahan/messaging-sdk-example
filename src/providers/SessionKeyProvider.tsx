@@ -13,6 +13,7 @@ interface SessionKeyContextProps {
   isInitializing: boolean;
   error: Error | null;
   clearSession: () => void;
+  initializeManually: () => Promise<void>;
 }
 
 const SessionKeyContext = createContext<SessionKeyContextProps | undefined>(undefined);
@@ -41,74 +42,86 @@ export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
     clearAllExpiredSessions();
   }, []);
 
+  const initializeManually = async () => {
+    if (!currentAccount?.address) {
+      setSessionKey(null);
+      return;
+    }
+
+    setIsInitializing(true);
+    setError(null);
+
+    try {
+      // Create a new session key
+      console.log('Creating new session key');
+      const newSessionKey = await SessionKey.create({
+        address: currentAccount.address,
+        packageId: PACKAGE_ID,
+        ttlMin: TTL_MINUTES,
+        suiClient,
+      });
+
+      // Sign the personal message
+      const message = await signPersonalMessage({
+        message: newSessionKey.getPersonalMessage(),
+      });
+
+      // Set the signature on the session key
+      await newSessionKey.setPersonalMessageSignature(message.signature);
+
+      // Save the session key to storage
+      saveSessionKey(currentAccount.address, PACKAGE_ID, newSessionKey);
+      console.log('New session key created and saved');
+
+      setSessionKey(newSessionKey);
+    } catch (err) {
+      console.error('Error initializing session key:', err);
+      setError(err instanceof Error ? err : new Error('Failed to initialize session key'));
+      setSessionKey(null);
+    } finally {
+      setIsInitializing(false);
+    }
+  };
+
   useEffect(() => {
-    const initializeSessionKey = async () => {
+    const loadCachedSession = async () => {
       if (!currentAccount?.address) {
         setSessionKey(null);
         return;
       }
 
-      setIsInitializing(true);
-      setError(null);
+      // Only try to load a cached session key, don't create a new one
+      const cachedSessionData = loadSessionKey(currentAccount.address, PACKAGE_ID);
 
-      try {
-        // First, try to load a cached session key
-        const cachedSessionData = loadSessionKey(currentAccount.address, PACKAGE_ID);
+      if (cachedSessionData) {
+        console.log('Loading cached session key');
+        try {
+          // Import the cached session key
+          const restoredSessionKey = SessionKey.import(cachedSessionData, suiClient);
 
-        if (cachedSessionData) {
-          console.log('Loading cached session key');
-          try {
-            // Import the cached session key
-            const restoredSessionKey = SessionKey.import(cachedSessionData, suiClient);
-
-            // Double-check it's not expired
-            if (!restoredSessionKey.isExpired()) {
-              setSessionKey(restoredSessionKey);
-              console.log('Successfully loaded cached session key');
-              return;
-            } else {
-              console.log('Cached session key is expired, creating new one');
-              clearSessionKey(currentAccount.address, PACKAGE_ID);
-            }
-          } catch (error) {
-            console.error('Failed to import cached session key:', error);
+          // Double-check it's not expired
+          if (!restoredSessionKey.isExpired()) {
+            setSessionKey(restoredSessionKey);
+            console.log('Successfully loaded cached session key');
+            return;
+          } else {
+            console.log('Cached session key is expired, manual initialization required');
             clearSessionKey(currentAccount.address, PACKAGE_ID);
+            setSessionKey(null);
           }
+        } catch (error) {
+          console.error('Failed to import cached session key:', error);
+          clearSessionKey(currentAccount.address, PACKAGE_ID);
+          setSessionKey(null);
         }
-
-        // No valid cached session, create a new one
-        console.log('Creating new session key');
-        const newSessionKey = await SessionKey.create({
-          address: currentAccount.address,
-          packageId: PACKAGE_ID,
-          ttlMin: TTL_MINUTES,
-          suiClient,
-        });
-
-        // Sign the personal message
-        const message = await signPersonalMessage({
-          message: newSessionKey.getPersonalMessage(),
-        });
-
-        // Set the signature on the session key
-        await newSessionKey.setPersonalMessageSignature(message.signature);
-
-        // Save the session key to storage
-        saveSessionKey(currentAccount.address, PACKAGE_ID, newSessionKey);
-        console.log('New session key created and saved');
-
-        setSessionKey(newSessionKey);
-      } catch (err) {
-        console.error('Error initializing session key:', err);
-        setError(err instanceof Error ? err : new Error('Failed to initialize session key'));
+      } else {
+        console.log('No cached session key found, manual initialization required');
         setSessionKey(null);
-      } finally {
-        setIsInitializing(false);
       }
     };
 
-    initializeSessionKey();
-  }, [currentAccount?.address, suiClient, signPersonalMessage]);
+    loadCachedSession();
+  }, [currentAccount?.address, suiClient]);
 
   // Clean up on disconnect
   useEffect(() => {
@@ -119,7 +132,7 @@ export const SessionKeyProvider = ({ children }: { children: ReactNode }) => {
   }, [currentAccount?.address, sessionKey]);
 
   return (
-    <SessionKeyContext.Provider value={{ sessionKey, isInitializing, error, clearSession }}>
+    <SessionKeyContext.Provider value={{ sessionKey, isInitializing, error, clearSession, initializeManually }}>
       {children}
     </SessionKeyContext.Provider>
   );
