@@ -51,6 +51,7 @@ export const AnalyticsEvents = {
   MESSAGE_SENT: 'message_sent',
   MESSAGES_LOADED_MORE: 'messages_loaded_more',
   GITHUB_CLICKED: 'github_clicked',
+  DISCORD_CLICKED: 'discord_clicked',
   FAUCET_CLICKED: 'faucet_clicked',
   CHANNEL_ERROR: 'channel_error',
   MESSAGE_ERROR: 'message_error',

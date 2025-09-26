@@ -1,6 +1,6 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
 import { Box, Container, Flex, Heading, Button, IconButton } from "@radix-ui/themes";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { GitHubLogoIcon, DiscordLogoIcon } from "@radix-ui/react-icons";
 import { SessionKeyProvider } from "./providers/SessionKeyProvider";
 import { MessagingClientProvider } from "./providers/MessagingClientProvider";
 
@@ -66,6 +66,16 @@ function AppContent() {
             }}
           >
             <GitHubLogoIcon width="24" height="24" />
+          </IconButton>
+          <IconButton
+            size="2"
+            variant="ghost"
+            onClick={() => {
+              trackEvent(AnalyticsEvents.DISCORD_CLICKED);
+              window.open('https://discord.gg/sS893zcPMN', '_blank');
+            }}
+          >
+            <DiscordLogoIcon width="24" height="24" />
           </IconButton>
         </Flex>
 
