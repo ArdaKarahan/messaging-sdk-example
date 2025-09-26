@@ -6,7 +6,6 @@ import {
   Button,
   TextArea,
   Checkbox,
-  Box,
   Heading,
   IconButton,
   Separator,
@@ -182,7 +181,7 @@ export function FeedbackCard({
         </Flex>
       </Flex>
 
-      <style jsx>{`
+      <style>{`
         @keyframes slideUp {
           from {
             opacity: 0;
