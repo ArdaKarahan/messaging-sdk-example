@@ -55,4 +55,8 @@ export const AnalyticsEvents = {
   FAUCET_CLICKED: 'faucet_clicked',
   CHANNEL_ERROR: 'channel_error',
   MESSAGE_ERROR: 'message_error',
+  FEEDBACK_SHOWN: 'feedback_shown',
+  FEEDBACK_SUBMITTED: 'feedback_submitted',
+  FEEDBACK_DISMISSED: 'feedback_dismissed',
+  FEEDBACK_OPT_OUT: 'feedback_opt_out',
 } as const;

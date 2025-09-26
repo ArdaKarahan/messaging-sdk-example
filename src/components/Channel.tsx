@@ -8,9 +8,10 @@ import { trackEvent, trackError, AnalyticsEvents } from '../utils/analytics';
 interface ChannelProps {
   channelId: string;
   onBack: () => void;
+  onInteraction?: () => void;
 }
 
-export function Channel({ channelId, onBack }: ChannelProps) {
+export function Channel({ channelId, onBack, onInteraction }: ChannelProps) {
   const currentAccount = useCurrentAccount();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isLoadingOlderRef = useRef(false);
@@ -76,6 +77,10 @@ export function Channel({ channelId, onBack }: ChannelProps) {
         channel_id: channelId,
         message_length: messageText.length,
       });
+      // Track interaction for feedback
+      if (onInteraction) {
+        onInteraction();
+      }
     } else if (channelError) {
       // Track message sending error
       trackError('message_send', channelError, {
