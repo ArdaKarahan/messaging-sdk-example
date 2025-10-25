@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SatelliteSection.module.css';
 import satelliteData from '../data/satellites.json';
+import satelliteIcon from '../assets/satellite-icon.jpeg';
 
 interface Satellite {
   name: string;
@@ -26,6 +27,7 @@ const SatelliteSection: React.FC = () => {
     <div className={styles.gridContainer}>
       {satellites.map((satellite) => (
         <div key={satellite.name} className={styles.card}>
+          <img src={satelliteIcon} alt="Satellite Icon" className={styles.icon} />
           <h3>{satellite.name}</h3>
           <p><strong>Company:</strong> {satellite.company}</p>
           <p className={styles.truncate}><strong>Wallet:</strong> {satellite.walletAddress}</p>

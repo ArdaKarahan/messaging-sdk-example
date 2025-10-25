@@ -1,0 +1,18 @@
+[
+  { "totalStaked": 12500, "location": "Nevada Desert, USA", "timeInSystem": "2 months" },
+  { "totalStaked": 8700, "location": "Sahara Desert, Africa", "timeInSystem": "45 days" },
+  { "totalStaked": 25000, "location": "Atacama Desert, Chile", "timeInSystem": "6 months" },
+  { "totalStaked": 5000, "location": "Gobi Desert, Mongolia", "timeInSystem": "1 month" },
+  { "totalStaked": 18000, "location": "Kalahari Desert, Africa", "timeInSystem": "3 months" },
+  { "totalStaked": 32000, "location": "Great Victoria Desert, Australia", "timeInSystem": "1 year" },
+  { "totalStaked": 7500, "location": "Patagonian Desert, Argentina", "timeInSystem": "2 weeks" },
+  { "totalStaked": 15000, "location": "Arabian Desert, Middle East", "timeInSystem": "5 months" },
+  { "totalStaked": 42000, "location": "Antarctic Polar Desert", "timeInSystem": "2 years" },
+  { "totalStaked": 9800, "location": "Arctic Polar Desert", "timeInSystem": "10 months" },
+  { "totalStaked": 21000, "location": "Sonoran Desert, USA/Mexico", "timeInSystem": "7 months" },
+  { "totalStaked": 11000, "location": "Thar Desert, India/Pakistan", "timeInSystem": "90 days" },
+  { "totalStaked": 28000, "location": "Dasht-e Kavir, Iran", "timeInSystem": "8 months" },
+  { "totalStaked": 6000, "location": "Mojave Desert, USA", "timeInSystem": "3 weeks" },
+  { "totalStaked": 19500, "location": "Chihuahuan Desert, Mexico/USA", "timeInSystem": "4 months" },
+  { "totalStaked": 35000, "location": "Great Basin Desert, USA", "timeInSystem": "1.5 years" }
+]

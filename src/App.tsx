@@ -5,6 +5,7 @@ import { SessionKeyProvider } from "./providers/SessionKeyProvider";
 import { MessagingClientProvider } from "./providers/MessagingClientProvider";
 import TopNavBar from "./components/TopNavBar";
 import SatelliteSection from "./components/SatelliteSection";
+import DishSection from "./components/DishSection";
 
 import { CreateChannel } from "./components/CreateChannel";
 import { ChannelList } from "./components/ChannelList";
@@ -91,7 +92,7 @@ function AppContent() {
       case "Satellites":
         return <SatelliteSection />;
       case "Dishes":
-        return <Heading>Dishes Content</Heading>;
+        return <DishSection />;
       default:
         return null;
     }
