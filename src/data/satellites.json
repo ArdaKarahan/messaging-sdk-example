@@ -1,0 +1,32 @@
+[
+  {
+    "name": "StarHopper 1",
+    "company": "Celestial Dynamics",
+    "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+    "publicKey": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+  },
+  {
+    "name": "GalaxyCruiser 2",
+    "company": "Astro Ventures",
+    "walletAddress": "0x234567890abcdef1234567890abcdef123456789",
+    "publicKey": "0xbcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890a"
+  },
+  {
+    "name": "CometChaser 3",
+    "company": "Stellar Link",
+    "walletAddress": "0x34567890abcdef1234567890abcdef1234567890",
+    "publicKey": "0xcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890ab"
+  },
+  {
+    "name": "SolarSailor 4",
+    "company": "Orbital Solutions",
+    "walletAddress": "0x4567890abcdef1234567890abcdef12345678901",
+    "publicKey": "0xdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abc"
+  },
+  {
+    "name": "VoidVoyager 5",
+    "company": "Cosmic Connections",
+    "walletAddress": "0x567890abcdef1234567890abcdef123456789012",
+    "publicKey": "0xef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd"
+  }
+]

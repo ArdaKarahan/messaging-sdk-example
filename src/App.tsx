@@ -4,6 +4,7 @@ import { GitHubLogoIcon, DiscordLogoIcon } from "@radix-ui/react-icons";
 import { SessionKeyProvider } from "./providers/SessionKeyProvider";
 import { MessagingClientProvider } from "./providers/MessagingClientProvider";
 import TopNavBar from "./components/TopNavBar";
+import SatelliteSection from "./components/SatelliteSection";
 
 import { CreateChannel } from "./components/CreateChannel";
 import { ChannelList } from "./components/ChannelList";
@@ -88,7 +89,7 @@ function AppContent() {
           </Flex>
         );
       case "Satellites":
-        return <Heading>Satellites Content</Heading>;
+        return <SatelliteSection />;
       case "Dishes":
         return <Heading>Dishes Content</Heading>;
       default:
