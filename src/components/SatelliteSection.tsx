@@ -7,7 +7,7 @@ interface Satellite {
   name: string;
   company: string;
   walletAddress: string;
-  publicKey: string;
+  satelliteWalletAddress: string;
 }
 
 const SatelliteSection: React.FC = () => {
@@ -31,7 +31,7 @@ const SatelliteSection: React.FC = () => {
           <h3>{satellite.name}</h3>
           <p><strong>Company:</strong> {satellite.company}</p>
           <p className={styles.truncate}><strong>Wallet:</strong> {satellite.walletAddress}</p>
-          <p className={styles.truncate}><strong>Public Key:</strong> {satellite.publicKey}</p>
+          <p className={styles.truncate}><strong>Satellite Wallet:</strong> {satellite.satelliteWalletAddress}</p>
         </div>
       ))}
     </div>
