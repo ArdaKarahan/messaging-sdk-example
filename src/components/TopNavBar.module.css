@@ -1,0 +1,79 @@
+.navBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+  z-index: 1000;
+}
+
+.navSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navSection:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 0.25rem;
+}
+
+.navSection span {
+  font-size: 0.875rem;
+}
+
+.active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.active span {
+  font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+  .navBar {
+    background-color: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+
+  .navSection:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .active {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@media (max-width: 600px) {
+  .navBar {
+    padding: 0.25rem 0;
+  }
+
+  .navSection {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .navSection span {
+    font-size: 0.75rem;
+  }
+}
