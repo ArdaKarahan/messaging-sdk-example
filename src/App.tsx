@@ -55,7 +55,16 @@ function AppContent() {
     setPrevAccount(currentAccount);
   }, [currentAccount, prevAccount]);
 
+  // Listen for hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      setChannelId(isValidSuiObjectId(hash) ? hash : null);
+    };
 
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Show feedback prompt automatically when threshold is reached
   useEffect(() => {
